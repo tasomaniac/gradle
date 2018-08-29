@@ -77,6 +77,7 @@ class SelectorState implements DependencyGraphSelector, ResolvableSelectorState 
     private boolean forced;
     private boolean softForced;
     private boolean fromLock;
+    private boolean reusable;
 
     // The following state needs to be tracked to consistently construct `ComponentOverrideMetadata` independent of the order dependencies are visited
     private IvyArtifactName firstDependencyArtifact;
@@ -211,6 +212,7 @@ class SelectorState implements DependencyGraphSelector, ResolvableSelectorState 
     }
 
     private boolean requiresResolve(ComponentIdResolveResult previousResult, VersionSelector allRejects) {
+        this.reusable = false;
         // If we've never resolved, must resolve
         if (previousResult == null) {
             return true;
@@ -244,11 +246,33 @@ class SelectorState implements DependencyGraphSelector, ResolvableSelectorState 
     }
 
     /**
+     * Marks a selector for reuse,
+     * indicating it could be used again for resolution
+     */
+    void markForReuse() {
+        assert resolved;
+        this.reusable = true;
+    }
+
+    /**
+     * Checks if the selector can be used for resolution.
+     *
+     * @return {@code true} if the selector can resolve, {@code false} otherwise
+     */
+    boolean canResolve() {
+        if (reusable) {
+            return true;
+        }
+        return !resolved;
+    }
+
+    /**
      * Overrides the component that is the chosen for this selector.
      * This happens when the `ModuleResolveState` is restarted, during conflict resolution or version range merging.
      */
     public void overrideSelection(ComponentState selected) {
         this.resolved = true;
+        this.reusable = false;
 
         // Target module can change, if this is called as the result of a module replacement conflict.
         this.targetModule = selected.getModule();

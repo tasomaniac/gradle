@@ -405,7 +405,7 @@ class AlignmentIntegrationTest extends AbstractAlignmentSpec {
         expectAlignment {
             module('core') alignsTo('2.9.4') byPublishedPlatform()
             module('databind') tries('2.7.9') alignsTo('2.9.4') byPublishedPlatform()
-            module('annotations') tries('2.7.9', '2.9.0') alignsTo('2.9.4') byPublishedPlatform()
+            module('annotations') tries('2.7.9') alignsTo('2.9.4') byPublishedPlatform()
             module('kt') alignsTo('2.9.4.1') byPublishedPlatform()
 
             doesNotGetPlatform("org", "platform", "2.9.0") // because of conflict resolution
@@ -969,7 +969,7 @@ class AlignmentIntegrationTest extends AbstractAlignmentSpec {
         expectAlignment {
             module('core') alignsTo('2.9.4') byPublishedPlatform()
             module('databind') tries('2.7.9') alignsTo('2.9.4') byPublishedPlatform()
-            module('annotations') tries('2.7.9', '2.9.0') alignsTo('2.9.4') byPublishedPlatform()
+            module('annotations') tries('2.7.9') alignsTo('2.9.4') byPublishedPlatform()
             module('kt') alignsTo('2.9.4.1') byPublishedPlatform()
 
             doesNotGetPlatform("org", "platform", "2.9.0") // because of conflict resolution
