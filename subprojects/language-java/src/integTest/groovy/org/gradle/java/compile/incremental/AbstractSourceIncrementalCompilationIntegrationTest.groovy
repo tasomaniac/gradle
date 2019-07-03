@@ -40,7 +40,10 @@ abstract class AbstractSourceIncrementalCompilationIntegrationTest extends Abstr
         for (String body : classBodies) {
             def className = (body =~ /(?s).*?(?:class|interface|enum) (\w+) .*/)[0][1]
             assert className: "unable to find class name"
-            def f = file("src/main/${language.name}/${className}.${language.name}")
+            def packageNameMatcher = (body =~ /(?s).*?(?:package) ([\w.]+).*/)
+            String packageName = packageNameMatcher.matches() ? packageNameMatcher[0][1] : ""
+            
+            def f = file("src/main/${language.name}/${packageName.replace('.' as char, '/' as char)}/${className}.${language.name}")
             f.createFile()
             f.text = body
             out = f
@@ -403,26 +406,32 @@ abstract class AbstractSourceIncrementalCompilationIntegrationTest extends Abstr
         buildFile << "sourceSets.main.${language.name}.srcDir 'extra'"
         source('class A1 {}')
         file("extra/A2.${language.name}") << "class A2 {}"
-        file("extra/B.${language.name}") << "class B {}"
+        def movedFile = file("extra/some/dir/B.${language.name}") << """package some.dir;
+        public class B {
+            public static class Inner { }
+        }"""
 
         run language.compileTaskName
 
         when:
-        file("extra/B.${language.name}").delete()
-        File src = source('class B {}')
+        File src = source(movedFile.text)
+        file(movedFile).delete()
         outputs.snapshot { run language.compileTaskName }
 
         then:
         skipped(":${language.compileTaskName}")
 
         when:
-        src.text = 'class C { }' // in B.java/B.groovy
+        src.text = """package some.dir;
+        public class B {
+            public static class NewInner { }
+        }""" // in B.java/B.groovy
         run language.compileTaskName
 
         then:
         executedAndNotSkipped(":${language.compileTaskName}")
-        outputs.recompiledClasses('C')
-        outputs.deletedClasses('B')
+        outputs.recompiledClasses('B', 'B$NewInner')
+        outputs.deletedClasses('B$Inner')
     }
 
     def "recompilation considers changes from dependent sourceSet"() {
