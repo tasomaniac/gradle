@@ -124,7 +124,7 @@ public class ExecuteActionsTaskExecuter implements TaskExecuter {
     private final ReservedFileSystemLocationRegistry reservedFileSystemLocationRegistry;
     private final EmptySourceTaskSkipper emptySourceTaskSkipper;
     private final FileCollectionFactory fileCollectionFactory;
-    private final boolean fineGrainedInvalidationEnabled = Boolean.getBoolean("org.gradle.experimental.fine.grained.invalidation");
+    private final boolean fineGrainedInvalidationEnabled = true;
 
     public ExecuteActionsTaskExecuter(
         boolean buildCacheEnabled,
