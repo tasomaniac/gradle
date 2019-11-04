@@ -49,7 +49,7 @@ public class DefaultSourceIncludesResolver implements SourceIncludesResolver {
 
     public DefaultSourceIncludesResolver(List<File> includePaths, VirtualFileSystem virtualFileSystem) {
         this.virtualFileSystem = virtualFileSystem;
-        List<DirectoryContents> includeDirs = new ArrayList<DirectoryContents>(includePaths.size());
+        List<DirectoryContents> includeDirs = new ArrayList<>(includePaths.size());
         for (File includeDir : includePaths) {
             includeDirs.add(toDir(includeDir));
         }
@@ -179,7 +179,7 @@ public class DefaultSourceIncludesResolver implements SourceIncludesResolver {
             return Collections.emptyList();
         }
 
-        List<Expression> expressions = new ArrayList<Expression>(leftValues.size() * rightValues.size());
+        List<Expression> expressions = new ArrayList<>(leftValues.size() * rightValues.size());
         for (Expression leftValue : leftValues) {
             if (leftValue.getType() != IncludeType.IDENTIFIER) {
                 if (rightValues.size() == 1) {
@@ -299,7 +299,7 @@ public class DefaultSourceIncludesResolver implements SourceIncludesResolver {
 
     private static class FixedIncludePath extends IncludePath {
         private final List<DirectoryContents> directories;
-        private final Map<String, CachedIncludeFile> cachedLookups = new HashMap<String, CachedIncludeFile>();
+        private final Map<String, CachedIncludeFile> cachedLookups = new HashMap<>();
 
         FixedIncludePath(List<DirectoryContents> directories) {
             this.directories = directories;
@@ -334,7 +334,7 @@ public class DefaultSourceIncludesResolver implements SourceIncludesResolver {
 
     private class DirectoryContents {
         private final File searchDir;
-        private final Map<String, CachedIncludeFile> contents = new HashMap<String, CachedIncludeFile>();
+        private final Map<String, CachedIncludeFile> contents = new HashMap<>();
 
         DirectoryContents(File searchDir) {
             this.searchDir = searchDir;
@@ -498,7 +498,7 @@ public class DefaultSourceIncludesResolver implements SourceIncludesResolver {
     }
 
     private static class BuildableResult implements IncludeResolutionResult {
-        private final Set<IncludeFile> files = new LinkedHashSet<IncludeFile>();
+        private final Set<IncludeFile> files = new LinkedHashSet<>();
         private boolean missing;
 
         void resolved(IncludeFile includeFile) {
@@ -521,7 +521,7 @@ public class DefaultSourceIncludesResolver implements SourceIncludesResolver {
     }
 
     private static class CollectTokens implements ExpressionVisitor {
-        private final Set<Expression> seen = new HashSet<Expression>();
+        private final Set<Expression> seen = new HashSet<>();
         private final TokenLookup tokenLookup;
         private final Expression expression;
 
@@ -564,10 +564,10 @@ public class DefaultSourceIncludesResolver implements SourceIncludesResolver {
     private class PathResolvingVisitor implements ExpressionVisitor {
         private final File sourceFile;
         private final BuildableResult results;
-        private final Set<Expression> seen = new HashSet<Expression>();
+        private final Set<Expression> seen = new HashSet<>();
 
-        Set<String> quoted = new HashSet<String>();
-        Set<String> system = new HashSet<String>();
+        Set<String> quoted = new HashSet<>();
+        Set<String> system = new HashSet<>();
 
         PathResolvingVisitor(File sourceFile, BuildableResult results) {
             this.sourceFile = sourceFile;
