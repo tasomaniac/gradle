@@ -44,7 +44,7 @@ import java.util.Set;
 public class DefaultSourceIncludesResolver implements SourceIncludesResolver {
     private static final MissingIncludeFile MISSING_INCLUDE_FILE = new MissingIncludeFile();
     private final VirtualFileSystem virtualFileSystem;
-    private final Map<File, DirectoryContents> includeRoots = new HashMap<File, DirectoryContents>();
+    private final Map<String, DirectoryContents> includeRoots = new HashMap<>();
     private final FixedIncludePath includePath;
 
     public DefaultSourceIncludesResolver(List<File> includePaths, VirtualFileSystem virtualFileSystem) {
@@ -259,12 +259,8 @@ public class DefaultSourceIncludesResolver implements SourceIncludesResolver {
     }
 
     private DirectoryContents toDir(File includeDir) {
-        DirectoryContents directoryContents = includeRoots.get(includeDir);
-        if (directoryContents == null) {
-            directoryContents = new DirectoryContents(includeDir);
-            includeRoots.put(includeDir, directoryContents);
-        }
-        return directoryContents;
+        String includeDirAbsolutePath = includeDir.getAbsolutePath();
+        return includeRoots.computeIfAbsent(includeDirAbsolutePath, key -> new DirectoryContents(includeDir));
     }
 
     private IncludePath prependSourceDir(File sourceFile, FixedIncludePath includePaths) {
