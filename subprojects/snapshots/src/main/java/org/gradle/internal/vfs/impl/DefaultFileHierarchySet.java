@@ -20,6 +20,8 @@ import com.google.common.annotations.VisibleForTesting;
 import org.gradle.internal.snapshot.FileSystemNode;
 import org.gradle.internal.snapshot.MetadataSnapshot;
 import org.gradle.internal.snapshot.PathUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
@@ -28,6 +30,7 @@ import static org.gradle.internal.snapshot.SnapshotUtil.invalidateSingleChild;
 import static org.gradle.internal.snapshot.SnapshotUtil.storeSingleChild;
 
 public class DefaultFileHierarchySet implements FileHierarchySet {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultFileHierarchySet.class);
     private static final String FILE_TO_INVESTIGATE = "VC\\include\\codeanalysis\\sourceannotations.h";
     @VisibleForTesting
     final FileSystemNode rootNode;
@@ -47,6 +50,7 @@ public class DefaultFileHierarchySet implements FileHierarchySet {
     public Optional<MetadataSnapshot> getMetadata(String absolutePath) {
         if (needToShow && absolutePath.endsWith(FILE_TO_INVESTIGATE)) {
             needToShow = false;
+            LOGGER.info("Querying {}", absolutePath);
             DefaultVirtualFileSystemPrettyPrinter.prettyPrint(this);
         }
         String normalizedPath = normalizeRoot(absolutePath);
@@ -62,10 +66,17 @@ public class DefaultFileHierarchySet implements FileHierarchySet {
     public FileHierarchySet update(String absolutePath, MetadataSnapshot snapshot) {
         if (absolutePath.endsWith(FILE_TO_INVESTIGATE)) {
             needToShow = true;
+            LOGGER.info("Before update {}", absolutePath);
             DefaultVirtualFileSystemPrettyPrinter.prettyPrint(this);
         }
         String normalizedPath = normalizeRoot(absolutePath);
-        return new DefaultFileHierarchySet(storeSingleChild(rootNode, normalizedPath, determineOffset(normalizedPath), snapshot));
+        DefaultFileHierarchySet updated = new DefaultFileHierarchySet(storeSingleChild(rootNode, normalizedPath, determineOffset(normalizedPath), snapshot));
+        if (absolutePath.endsWith(FILE_TO_INVESTIGATE)) {
+            needToShow = true;
+            LOGGER.info("After update {}", absolutePath);
+            DefaultVirtualFileSystemPrettyPrinter.prettyPrint(updated);
+        }
+        return updated;
     }
 
     @Override
