@@ -48,7 +48,8 @@ public class DefaultVirtualFileSystemPrettyPrinter {
 
     private static String determineNodeType(FileSystemNode node) {
         if (node instanceof PathCompressingSnapshotWrapper) {
-            return ((PathCompressingSnapshotWrapper) node).getType().toString();
+            PathCompressingSnapshotWrapper pathCompressingNode = (PathCompressingSnapshotWrapper) node;
+            return pathCompressingNode.getType().toString() + " | " + pathCompressingNode.getMetadata().get().getClass().getSimpleName();
         }
         return node.getClass().getSimpleName();
     }

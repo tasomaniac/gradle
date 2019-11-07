@@ -71,7 +71,7 @@ public class DefaultFileHierarchySet implements FileHierarchySet {
         }
         String normalizedPath = normalizeRoot(absolutePath);
         DefaultFileHierarchySet updated = new DefaultFileHierarchySet(storeSingleChild(rootNode, normalizedPath, determineOffset(normalizedPath), snapshot));
-        if (absolutePath.endsWith(FILE_TO_INVESTIGATE)) {
+        if (absolutePath.endsWith(FILE_TO_INVESTIGATE) || absolutePath.startsWith("C:\\Program Files (x86)\\Microsoft Visual Studio 11.0\\VC\\include")) {
             needToShow = true;
             LOGGER.info("After update {}", absolutePath);
             DefaultVirtualFileSystemPrettyPrinter.prettyPrint(updated);
