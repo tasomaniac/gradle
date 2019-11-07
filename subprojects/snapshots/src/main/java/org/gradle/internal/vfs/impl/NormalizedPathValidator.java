@@ -127,18 +127,18 @@ public class NormalizedPathValidator {
                     lastIsDirectory = true;
                 }
                 int j;
-                for (j = i - 4 ; j >= prefix; j--) {
+                for (j = i - 4; j >= prefix; j--) {
                     if (array[j] == SYSTEM_SEPARATOR) {
                         // remove b/../ from a/b/../c
                         System.arraycopy(array, i + 1, array, j + 1, size - i);
-                        size -= (i - j);
+                        size -= i - j;
                         i = j + 1;
                         continue outer;
                     }
                 }
                 // remove a/../ from a/../c
                 System.arraycopy(array, i + 1, array, prefix, size - i);
-                size -= (i + 1 - prefix);
+                size -= i + 1 - prefix;
                 i = prefix + 1;
             }
         }
@@ -170,7 +170,7 @@ public class NormalizedPathValidator {
             if (ch0 == '~') {
                 return 2;  // return a length greater than the input
             }
-            return (isSeparator(ch0) ? 1 : 0);
+            return isSeparator(ch0) ? 1 : 0;
         } else {
             if (ch0 == '~') {
                 int posUnix = filename.indexOf(UNIX_SEPARATOR, 1);
@@ -178,8 +178,8 @@ public class NormalizedPathValidator {
                 if (posUnix == -1 && posWin == -1) {
                     return len + 1;  // return a length greater than the input
                 }
-                posUnix = (posUnix == -1 ? posWin : posUnix);
-                posWin = (posWin == -1 ? posUnix : posWin);
+                posUnix = posUnix == -1 ? posWin : posUnix;
+                posWin = posWin == -1 ? posUnix : posWin;
                 return Math.min(posUnix, posWin) + 1;
             }
             char ch1 = filename.charAt(1);
@@ -199,11 +199,11 @@ public class NormalizedPathValidator {
                 if ((posUnix == -1 && posWin == -1) || posUnix == 2 || posWin == 2) {
                     return -1;
                 }
-                posUnix = (posUnix == -1 ? posWin : posUnix);
-                posWin = (posWin == -1 ? posUnix : posWin);
+                posUnix = posUnix == -1 ? posWin : posUnix;
+                posWin = posWin == -1 ? posUnix : posWin;
                 return Math.min(posUnix, posWin) + 1;
             } else {
-                return (isSeparator(ch0) ? 1 : 0);
+                return isSeparator(ch0) ? 1 : 0;
             }
         }
     }
