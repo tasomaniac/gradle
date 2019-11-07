@@ -67,7 +67,7 @@ class AssemblyLanguageIncrementalBuildIntegrationTest extends AbstractInstalledT
 
     def "does not re-execute build with no change"() {
         when:
-        run "mainExecutable"
+        run "mainExecutable", "--info"
 
         then:
         allSkipped()
