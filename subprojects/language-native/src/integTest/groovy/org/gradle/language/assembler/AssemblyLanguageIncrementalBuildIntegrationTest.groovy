@@ -60,7 +60,7 @@ class AssemblyLanguageIncrementalBuildIntegrationTest extends AbstractInstalledT
         app.library.writeSources(file("src/hello"))
         asmSourceFile = file("src/hello/asm/sum.s")
 
-        run "installMainExecutable"
+        run "installMainExecutable", "--info"
 
         install = installation("build/install/main")
     }

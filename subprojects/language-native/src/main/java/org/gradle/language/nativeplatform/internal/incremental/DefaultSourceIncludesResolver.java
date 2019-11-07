@@ -28,6 +28,8 @@ import org.gradle.language.nativeplatform.internal.Macro;
 import org.gradle.language.nativeplatform.internal.MacroFunction;
 import org.gradle.language.nativeplatform.internal.incremental.sourceparser.ComplexExpression;
 import org.gradle.language.nativeplatform.internal.incremental.sourceparser.SimpleExpression;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -42,6 +44,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class DefaultSourceIncludesResolver implements SourceIncludesResolver {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSourceIncludesResolver.class);
     private static final MissingIncludeFile MISSING_INCLUDE_FILE = new MissingIncludeFile();
     private final VirtualFileSystem virtualFileSystem;
     private final Map<File, DirectoryContents> includeRoots = new HashMap<File, DirectoryContents>();
@@ -348,9 +351,11 @@ public class DefaultSourceIncludesResolver implements SourceIncludesResolver {
             return contents.computeIfAbsent(includePath,
                 key -> {
                     File candidate = normalizeIncludePath(searchDir, includePath);
-                    return virtualFileSystem.readRegularFileContentHash(candidate.getAbsolutePath(),
-                            contentHash -> (CachedIncludeFile) new SystemIncludeFile(candidate, key, contentHash)
-                        ).orElse(MISSING_INCLUDE_FILE);
+                    CachedIncludeFile cachedIncludeFile = virtualFileSystem.readRegularFileContentHash(candidate.getAbsolutePath(),
+                        contentHash -> (CachedIncludeFile) new SystemIncludeFile(candidate, key, contentHash)
+                    ).orElse(MISSING_INCLUDE_FILE);
+                    LOGGER.info("Include {} is {} in {}, full path: {}", includePath, cachedIncludeFile.getType(), searchDir.getAbsolutePath(), candidate.getAbsolutePath());
+                    return cachedIncludeFile;
                 });
         }
     }
