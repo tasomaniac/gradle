@@ -19,6 +19,7 @@ package org.gradle.internal.vfs.impl;
 import org.gradle.internal.snapshot.AbstractIncompleteSnapshotWithChildren;
 import org.gradle.internal.snapshot.FileSystemNode;
 import org.gradle.internal.snapshot.MetadataSnapshot;
+import org.gradle.internal.snapshot.PathCompressingSnapshotWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,10 +39,17 @@ public class DefaultVirtualFileSystemPrettyPrinter {
         if (depth == 0) {
             LOGGER.info((File.separatorChar == '/' ? '/' : "") + node.getPathToParent());
         } else {
-            LOGGER.info(String.format("%" + depth * 2 + "c{}{}", ' '), node.getPathToParent().replace(File.separatorChar, '/'), node instanceof MetadataSnapshot ? " | " + ((MetadataSnapshot) node).getType() : "");
+            LOGGER.info(String.format("%" + depth * 2 + "c{}{}", ' '), node.getPathToParent().replace(File.separatorChar, '/'), node instanceof MetadataSnapshot ? " | " + determineNodeType(node) : "");
         }
         if (node instanceof AbstractIncompleteSnapshotWithChildren) {
             ((AbstractIncompleteSnapshotWithChildren) node).children.forEach(child -> print(child, depth + 1));
         }
+    }
+
+    private static String determineNodeType(FileSystemNode node) {
+        if (node instanceof PathCompressingSnapshotWrapper) {
+            return ((PathCompressingSnapshotWrapper) node).getType().toString();
+        }
+        return node.getClass().getSimpleName();
     }
 }
