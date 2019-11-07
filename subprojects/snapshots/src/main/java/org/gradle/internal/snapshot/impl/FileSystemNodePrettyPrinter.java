@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.gradle.internal.vfs.impl;
+package org.gradle.internal.snapshot.impl;
 
 import org.gradle.internal.snapshot.AbstractIncompleteSnapshotWithChildren;
 import org.gradle.internal.snapshot.CompleteDirectorySnapshot;
@@ -26,26 +26,27 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-public class DefaultVirtualFileSystemPrettyPrinter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultVirtualFileSystemPrettyPrinter.class);
+public class FileSystemNodePrettyPrinter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemNodePrettyPrinter.class);
 
-    public static void prettyPrint(DefaultFileHierarchySet set) {
-        if (LOGGER.isInfoEnabled()) {
-            print(set.rootNode, 0);
+    public static void prettyPrint(FileSystemNode node, int depth) {
+        if (!LOGGER.isInfoEnabled()) {
+            return;
         }
-    }
-
-
-    private static void print(FileSystemNode node, int depth) {
         if (depth == 0) {
             LOGGER.info((File.separatorChar == '/' ? '/' : "") + node.getPathToParent());
         } else {
             LOGGER.info(String.format("%" + depth * 2 + "c{}{}", ' '), node.getPathToParent().replace(File.separatorChar, '/'), node instanceof MetadataSnapshot ? " | " + determineNodeType(node) : "");
         }
         if (node instanceof AbstractIncompleteSnapshotWithChildren) {
-            ((AbstractIncompleteSnapshotWithChildren) node).children.forEach(child -> print(child, depth + 1));
+            ((AbstractIncompleteSnapshotWithChildren) node).children.forEach(child -> prettyPrint(child, depth + 1));
         } else if (node instanceof CompleteDirectorySnapshot) {
-            ((CompleteDirectorySnapshot) node).getChildren().forEach(child -> print(child, depth + 1));
+            ((CompleteDirectorySnapshot) node).getChildren().forEach(child -> prettyPrint(child, depth + 1));
+        } else if (node instanceof PathCompressingSnapshotWrapper) {
+            MetadataSnapshot snapshot = ((PathCompressingSnapshotWrapper) node).getMetadata().get();
+            if (snapshot instanceof CompleteDirectorySnapshot) {
+                ((CompleteDirectorySnapshot) snapshot).getChildren().forEach(child -> prettyPrint(child, depth + 1));
+            }
         }
     }
 

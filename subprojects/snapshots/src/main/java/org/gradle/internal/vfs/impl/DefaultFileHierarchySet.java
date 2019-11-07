@@ -20,6 +20,7 @@ import com.google.common.annotations.VisibleForTesting;
 import org.gradle.internal.snapshot.FileSystemNode;
 import org.gradle.internal.snapshot.MetadataSnapshot;
 import org.gradle.internal.snapshot.PathUtil;
+import org.gradle.internal.snapshot.impl.FileSystemNodePrettyPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +52,7 @@ public class DefaultFileHierarchySet implements FileHierarchySet {
         if (needToShow && absolutePath.endsWith(FILE_TO_INVESTIGATE)) {
             needToShow = false;
             LOGGER.info("Querying {}", absolutePath);
-            DefaultVirtualFileSystemPrettyPrinter.prettyPrint(this);
+            FileSystemNodePrettyPrinter.prettyPrint(rootNode, 0);
         }
         String normalizedPath = normalizeRoot(absolutePath);
         int offset = determineOffset(absolutePath);
@@ -67,14 +68,14 @@ public class DefaultFileHierarchySet implements FileHierarchySet {
         if (absolutePath.endsWith(FILE_TO_INVESTIGATE)) {
             needToShow = true;
             LOGGER.info("Before update {}", absolutePath);
-            DefaultVirtualFileSystemPrettyPrinter.prettyPrint(this);
+            FileSystemNodePrettyPrinter.prettyPrint(rootNode, 0);
         }
         String normalizedPath = normalizeRoot(absolutePath);
         DefaultFileHierarchySet updated = new DefaultFileHierarchySet(storeSingleChild(rootNode, normalizedPath, determineOffset(normalizedPath), snapshot));
         if (absolutePath.endsWith(FILE_TO_INVESTIGATE) || absolutePath.startsWith("C:\\Program Files (x86)\\Microsoft Visual Studio 11.0\\VC\\include")) {
             needToShow = true;
             LOGGER.info("After update {}", absolutePath);
-            DefaultVirtualFileSystemPrettyPrinter.prettyPrint(updated);
+            FileSystemNodePrettyPrinter.prettyPrint(updated.rootNode, 0);
         }
         return updated;
     }
