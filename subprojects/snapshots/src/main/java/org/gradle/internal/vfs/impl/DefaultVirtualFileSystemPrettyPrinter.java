@@ -17,6 +17,7 @@
 package org.gradle.internal.vfs.impl;
 
 import org.gradle.internal.snapshot.AbstractIncompleteSnapshotWithChildren;
+import org.gradle.internal.snapshot.CompleteDirectorySnapshot;
 import org.gradle.internal.snapshot.FileSystemNode;
 import org.gradle.internal.snapshot.MetadataSnapshot;
 import org.gradle.internal.snapshot.PathCompressingSnapshotWrapper;
@@ -43,6 +44,8 @@ public class DefaultVirtualFileSystemPrettyPrinter {
         }
         if (node instanceof AbstractIncompleteSnapshotWithChildren) {
             ((AbstractIncompleteSnapshotWithChildren) node).children.forEach(child -> print(child, depth + 1));
+        } else if (node instanceof CompleteDirectorySnapshot) {
+            ((CompleteDirectorySnapshot) node).getChildren().forEach(child -> print(child, depth + 1));
         }
     }
 
