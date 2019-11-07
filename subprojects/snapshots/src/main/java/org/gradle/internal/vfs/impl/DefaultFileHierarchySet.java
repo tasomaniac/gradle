@@ -76,6 +76,7 @@ public class DefaultFileHierarchySet implements FileHierarchySet {
     }
 
     private static String normalizeRoot(String absolutePath) {
+        NormalizedPathValidator.validateNormalizedAbsolutePath(absolutePath);
         if (absolutePath.equals("/")) {
             return absolutePath;
         }
