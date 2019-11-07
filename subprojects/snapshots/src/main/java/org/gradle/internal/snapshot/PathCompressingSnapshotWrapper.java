@@ -57,7 +57,7 @@ public class PathCompressingSnapshotWrapper extends AbstractFileSystemNode imple
     public FileSystemNode withPathToParent(String newPathToParent) {
         return getPathToParent().equals(newPathToParent)
             ? this
-            : new PathCompressingSnapshotWrapper(newPathToParent, snapshot);
+            : snapshot.withPathToParent(newPathToParent);
     }
 
     @Override
