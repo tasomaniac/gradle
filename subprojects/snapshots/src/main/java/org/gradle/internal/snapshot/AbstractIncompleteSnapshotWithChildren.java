@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class AbstractIncompleteSnapshotWithChildren extends AbstractFileSystemNode {
-    protected final List<? extends FileSystemNode> children;
+    public final List<? extends FileSystemNode> children;
 
     public AbstractIncompleteSnapshotWithChildren(String pathToParent, List<? extends FileSystemNode> children) {
         super(pathToParent);

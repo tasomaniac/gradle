@@ -28,8 +28,10 @@ import static org.gradle.internal.snapshot.SnapshotUtil.invalidateSingleChild;
 import static org.gradle.internal.snapshot.SnapshotUtil.storeSingleChild;
 
 public class DefaultFileHierarchySet implements FileHierarchySet {
+    private static final String FILE_TO_INVESTIGATE = "VC\\include\\codeanalysis\\sourceannotations.h";
     @VisibleForTesting
     final FileSystemNode rootNode;
+    private boolean needToShow = true;
 
     public static FileHierarchySet from(String absolutePath, MetadataSnapshot snapshot) {
         String normalizedPath = normalizeRoot(absolutePath);
@@ -43,6 +45,10 @@ public class DefaultFileHierarchySet implements FileHierarchySet {
 
     @Override
     public Optional<MetadataSnapshot> getMetadata(String absolutePath) {
+        if (needToShow && absolutePath.endsWith(FILE_TO_INVESTIGATE)) {
+            needToShow = false;
+            DefaultVirtualFileSystemPrettyPrinter.prettyPrint(this);
+        }
         String normalizedPath = normalizeRoot(absolutePath);
         int offset = determineOffset(absolutePath);
         String pathToParent = rootNode.getPathToParent();
@@ -54,6 +60,10 @@ public class DefaultFileHierarchySet implements FileHierarchySet {
 
     @Override
     public FileHierarchySet update(String absolutePath, MetadataSnapshot snapshot) {
+        if (absolutePath.endsWith(FILE_TO_INVESTIGATE)) {
+            needToShow = true;
+            DefaultVirtualFileSystemPrettyPrinter.prettyPrint(this);
+        }
         String normalizedPath = normalizeRoot(absolutePath);
         return new DefaultFileHierarchySet(storeSingleChild(rootNode, normalizedPath, determineOffset(normalizedPath), snapshot));
     }
