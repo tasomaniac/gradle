@@ -47,7 +47,7 @@ public class SnapshotUtil {
                 }
                 return noChildFoundResult.get();
             default:
-                if (numberOfChildren < 10) {
+                if (numberOfChildren < 5) {
                     for (FileSystemNode currentChild : children) {
                         if (PathUtil.isChildOfOrThis(currentChild.getPathToParent(), filePath, offset, caseSensitivity)) {
                             return getSnapshotFromChild(filePath, offset, currentChild, caseSensitivity);
