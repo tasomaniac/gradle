@@ -25,8 +25,8 @@ class PartialDirectorySnapshotTest extends Specification {
     def "can obtain metadata from Directory"() {
         def metadataSnapshot = new PartialDirectorySnapshot("some/prefix", ImmutableList.of())
         expect:
-        metadataSnapshot.getSnapshot("/absolute/path", "/absolute/path".length() + 1, caseSensitivity).get() == metadataSnapshot
-        !metadataSnapshot.getSnapshot("another/path", 0, caseSensitivity).present
+        metadataSnapshot.getSnapshot(OffsetRelativePath.of("/absolute/path", "/absolute/path".length() + 1), caseSensitivity).get() == metadataSnapshot
+        !metadataSnapshot.getSnapshot(OffsetRelativePath.of("another/path", 0), caseSensitivity).present
 
         where:
         caseSensitivity << CaseSensitivity.values()
@@ -36,7 +36,7 @@ class PartialDirectorySnapshotTest extends Specification {
         def metadataSnapshot = new PartialDirectorySnapshot("some/prefix", ImmutableList.of(new RegularFileSnapshot("/absolute/some/prefix/whatever", "whatever", HashCode.fromInt(1234), new FileMetadata(2, 3))))
 
         expect:
-        metadataSnapshot.invalidate("whatever", 0, caseSensitivity).get().getSnapshot("/absolute/some/prefix", "/absolute/some/prefix".length() + 1, caseSensitivity).get().type == FileType.Directory
+        metadataSnapshot.invalidate(OffsetRelativePath.of("whatever", 0), caseSensitivity).get().getSnapshot(OffsetRelativePath.of("/absolute/some/prefix", "/absolute/some/prefix".length() + 1), caseSensitivity).get().type == FileType.Directory
 
         where:
         caseSensitivity << CaseSensitivity.values()

@@ -31,7 +31,7 @@ public abstract class AbstractFileSystemNode implements FileSystemNode {
      */
     protected abstract Optional<MetadataSnapshot> getMetadata();
 
-    protected abstract Optional<MetadataSnapshot> getChildMetadata(String absolutePath, int offset, CaseSensitivity caseSensitivity);
+    protected abstract Optional<MetadataSnapshot> getChildMetadata(OffsetRelativePath relativePath, CaseSensitivity caseSensitivity);
 
     @Override
     public String getPathToParent() {
@@ -39,11 +39,11 @@ public abstract class AbstractFileSystemNode implements FileSystemNode {
     }
 
     @Override
-    public Optional<MetadataSnapshot> getSnapshot(String absolutePath, int offset, CaseSensitivity caseSensitivity) {
+    public Optional<MetadataSnapshot> getSnapshot(OffsetRelativePath relativePath, CaseSensitivity caseSensitivity) {
         return SnapshotUtil.thisOrGet(
             getMetadata().orElse(null),
-            absolutePath, offset,
-            () -> getChildMetadata(absolutePath, offset, caseSensitivity)
+            relativePath,
+            () -> getChildMetadata(relativePath, caseSensitivity)
         );
     }
 }

@@ -43,7 +43,7 @@ public abstract class AbstractCompleteFileSystemLocationSnapshot implements Comp
     }
 
     @Override
-    public CompleteFileSystemLocationSnapshot store(String absolutePath, int offset, CaseSensitivity caseSensitivity, MetadataSnapshot snapshot) {
+    public CompleteFileSystemLocationSnapshot store(OffsetRelativePath relativePath, CaseSensitivity caseSensitivity, MetadataSnapshot snapshot) {
         return this;
     }
 
@@ -55,13 +55,13 @@ public abstract class AbstractCompleteFileSystemLocationSnapshot implements Comp
     }
 
     @Override
-    public Optional<MetadataSnapshot> getSnapshot(String absolutePath, int offset, CaseSensitivity caseSensitivity) {
+    public Optional<MetadataSnapshot> getSnapshot(OffsetRelativePath relativePath, CaseSensitivity caseSensitivity) {
         return SnapshotUtil.thisOrGet(this,
-            absolutePath, offset,
-            () -> getChildSnapshot(absolutePath, offset, caseSensitivity));
+            relativePath,
+            () -> getChildSnapshot(relativePath, caseSensitivity));
     }
 
-    protected Optional<MetadataSnapshot> getChildSnapshot(String absolutePath, int offset, CaseSensitivity caseSensitivity) {
-        return Optional.of(SnapshotUtil.missingSnapshotForAbsolutePath(absolutePath));
+    protected Optional<MetadataSnapshot> getChildSnapshot(OffsetRelativePath relativePath, CaseSensitivity caseSensitivity) {
+        return Optional.of(SnapshotUtil.missingSnapshotForAbsolutePath(relativePath.getAbsolutePath()));
     }
 }

@@ -30,22 +30,19 @@ public interface FileSystemNode {
      * That means that filePath.substring(offset) does not include the {@link #getPathToParent()}.
      * Therefore, when filePath.length + 1 == offset, then this node will be returned.
      */
-    Optional<MetadataSnapshot> getSnapshot(String absolutePath, int offset, CaseSensitivity caseSensitivity);
+    Optional<MetadataSnapshot> getSnapshot(OffsetRelativePath relativePath, CaseSensitivity caseSensitivity);
 
     /**
      * Stores information to the virtual file system that we have learned about.
      *
      * Complete information, like {@link CompleteFileSystemLocationSnapshot}s, are not touched nor replaced.
-     * @param absolutePath the path to update, starting from offset. Must not include the {@link #getPathToParent()}.
      */
-    FileSystemNode store(String absolutePath, int offset, CaseSensitivity caseSensitivity, MetadataSnapshot snapshot);
+    FileSystemNode store(OffsetRelativePath relativePath, CaseSensitivity caseSensitivity, MetadataSnapshot snapshot);
 
     /**
      * Invalidates part of the node.
-     *
-     * @param absolutePath the path to invalidate, starting from the offset. Must not include the {@link #getPathToParent()}.
      */
-    Optional<FileSystemNode> invalidate(String absolutePath, int offset, CaseSensitivity caseSensitivity);
+    Optional<FileSystemNode> invalidate(OffsetRelativePath relativePath, CaseSensitivity caseSensitivity);
 
     /**
      * The path to the parent snapshot or the root of the file system.
